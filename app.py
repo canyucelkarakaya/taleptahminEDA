@@ -133,5 +133,98 @@ plt.tight_layout()
 st.pyplot(plt.gcf())
 
 
+# Veriyi yükleyin (Excel dosyanızın yolunu belirtin)
+data = pd.read_excel('tez2.xlsx')
+
+# Hafta içi ve hafta sonu günlerini gruplayın
+weekday_sales = data[data['DayOfWeek'] < 5].groupby('DayOfWeek')['Quantity'].sum()
+weekend_sales = data[data['DayOfWeek'] >= 5].groupby('DayOfWeek')['Quantity'].sum()
+
+# Günlerin Türkçe isimleri
+gunler = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
+
+# Streamlit uygulamasını oluşturun
+st.title('6. Haftanın Günlerine Göre Toplam Satışlar')
+
+# Sütun grafiğini çizin
+fig, ax = plt.subplots(figsize=(10, 6))
+plots = ax.bar(gunler, weekday_sales.tolist() + weekend_sales.tolist(), color=['blue', 'blue', 'blue', 'blue', 'blue', 'red', 'red'])
+ax.set_xlabel('Gün')
+ax.set_ylabel('Satışlar')
+
+# Toplam satış miktarlarını sütunların üzerine yazdırın
+for bar in plots:
+    ax.annotate(format(bar.get_height(), '.0f'),
+                (bar.get_x() + bar.get_width() / 2, bar.get_height()),
+                ha='center', va='center', size=10, xytext=(0, 8),
+                textcoords='offset points')
+
+# Streamlit'e görseli ekleyin
+st.pyplot(fig)
 
 
+
+
+# Veriyi yükleyin (Excel dosyanızın yolunu belirtin)
+data = pd.read_excel('tez2.xlsx')
+
+# Aylara göre toplam satışları gruplayın
+monthly_sales = data.groupby('month')['Quantity'].sum()
+
+# Ayların Türkçe isimleri
+aylar = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık']
+
+# Streamlit uygulamasını oluşturun
+st.title('7. Aylara Göre Toplam Satışlar')
+
+# Sütun grafiğini çizin
+fig, ax = plt.subplots(figsize=(10, 6))
+plots = ax.bar(aylar, monthly_sales.tolist(), color='skyblue')
+ax.set_xlabel('Ay')
+ax.set_ylabel('Satışlar')
+
+# Toplam satış miktarlarını sütunların üzerine yazdırın
+for bar in plots:
+    ax.annotate(format(bar.get_height(), '.0f'),
+                (bar.get_x() + bar.get_width() / 2, bar.get_height()),
+                ha='center', va='bottom', size=10)
+
+# Toplam satış miktarını grafiğin üzerine yazdırın
+total_sales = monthly_sales.sum()
+ax.text(0, max(monthly_sales) * 1, f'Toplam: {total_sales:.0f}', ha='left', va='center', size=12)
+
+# Streamlit'e görseli ekleyin
+st.pyplot(fig)
+
+# Veriyi yükleyin (Excel dosyanızın yolunu belirtin)
+data = pd.read_excel('tez2.xlsx')
+
+# Mevsimlere göre toplam satışları gruplayın
+seasonal_sales = data.groupby('Season')['Quantity'].sum()
+
+# Toplam satış miktarını hesaplayın
+total_sales = seasonal_sales.sum()
+
+# Mevsimlere göre toplam satışları yeniden hesaplayın
+spring_sales = data[data['Season'] == "Spring"]['Quantity'].sum()
+summer_sales = data[data['Season'] == 'Summer']['Quantity'].sum()
+fall_sales = data[data['Season'] == 'Autumn']['Quantity'].sum()
+winter_sales = data[data['Season'] == 'Winter']['Quantity'].sum()
+
+# Streamlit uygulamasını oluşturun
+st.title('8. Mevsimlere Göre Toplam Satışlar')
+
+# Pasta grafiğini çizin
+fig, ax = plt.subplots(figsize=(8, 8))
+sales = [spring_sales, summer_sales, fall_sales, winter_sales]
+labels = [f'Spring\n{spring_sales}', f'Summer\n{summer_sales}', f'Autumn\n{fall_sales}', f'Winter\n{winter_sales}']
+colors = ['orange', 'red', 'green', 'blue']
+ax.pie(sales, labels=labels, autopct='%1.1f%%', colors=colors)
+ax.set_title('Mevsimlere Göre Toplam Satışlar')
+ax.axis('equal')  # Pasta grafiğinin dairesel olmasını sağlar
+
+# Toplam satış miktarını grafiğin altına yazdırın
+ax.text(0, -1.2, f'Toplam: {total_sales:.0f}', ha='center', va='center', size=12)
+
+# Streamlit'e görseli ekleyin
+st.pyplot(fig)
